@@ -11,24 +11,49 @@ import XCTest
 
 class EmojiMob2Tests: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testDecode() {
+       let input = """
+            {
+              "emoji": "😀"
+            , "description": "grinning face"
+            , "category": "Smileys & Emotion"
+            , "aliases": [
+                "grinning"
+              ]
+            , "tags": [
+                "smile"
+              , "happy"
+              ]
+            , "unicode_version": "6.1"
+            , "ios_version": "6.0"
+            }
+            """
+        let decoder = JSONDecoder()
+        let emoji = try! decoder.decode(Emoji.self, from: input.data(using: .utf8)!)
+        
+        XCTAssertEqual(emoji.character, "😀")
+        XCTAssertEqual(emoji.description, "grinning face")
     }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    func testDecodeFile() {
+        let url = Bundle.main.url(forResource: "Data", withExtension: "json")!
+        let data = try! Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        
+        XCTAssertNoThrow(try decoder.decode([Emoji].self, from: data))
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    func testEmojiService() {
+        let expectation = self.expectation(description: "emoji service")
+        let emojiService = EmojiService()
+        var emojis: [Emoji]?
+        
+        emojiService.getEmojis { result in
+            emojis = try? result.get()
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 5000)
+        XCTAssertNotNil(emojis)
     }
 
 }
