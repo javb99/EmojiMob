@@ -14,7 +14,7 @@ typealias EmojiProvider = (@escaping Completion<[Emoji]>) -> Void
 class ViewController: UICollectionViewController {
     internal init(getEmoji: @escaping EmojiProvider) {
         self.getEmoji = getEmoji
-        super.init(collectionViewLayout: Self.createLayout())
+        super.init(collectionViewLayout: Self.createLayout()) // UICollectionViewFlowLayout.init() for simple view
     }
     
     required init?(coder: NSCoder) {
