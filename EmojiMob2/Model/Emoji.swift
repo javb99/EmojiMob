@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Emoji: Codable {
+struct Emoji: Codable, Hashable, Identifiable {
 //    {
 //      "emoji": "😀"
 //    , "description": "grinning face"
@@ -23,6 +23,7 @@ struct Emoji: Codable {
 //    , "unicode_version": "6.1"
 //    , "ios_version": "6.0"
 //    }
+    var id: String { character }
     enum CodingKeys: String, CodingKey {
         case character = "emoji"
         case description
